@@ -1,0 +1,22 @@
+.Finished {
+  background-color: rgba(0,0,0,.3);
+  display: flex;
+  top: 0;
+  bottom: 0;
+  height: 100vh;
+  position: absolute;
+  width: 100vw;
+  z-index: 99;
+  align-items: center;
+  justify-content: center;
+}
+
+.Finished .dialog {
+  background-color: #fff;
+  border-radius: 3px;
+  box-shadow: 10px 10px 30px rgba(0,0,0,.2);
+  flex: 1;
+  padding: 40px;
+  text-align: center;
+  max-width: 500px;
+}

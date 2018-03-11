@@ -1,21 +1,28 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react'
+import Board from './containers/Board'
+import CreateGameButton from './components/CreateGameButton'
+import Finished from './components/Finished'
+import Progress from './components/Progress'
+import './App.css'
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="title">0hh1</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+        <h1 className="title">0hh1</h1>
+
+        <div className="actions">
+          <CreateGameButton />
+        </div>
+
+        <Progress />
+
+        <Board />
+
+        <Finished />
       </div>
-    );
+    )
   }
 }
 
-export default App;
+export default App
