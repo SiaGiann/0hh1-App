@@ -6,6 +6,7 @@ const authRouter = require('./authentication/router')
 const tokenMiddleware = require('./authentication/middleware').tokenMiddleware
 const requireUser = require('./authentication/middleware').requireUser
 const { Game } = require('./models')
+const rules = require('./lib/game')
 
 const port = process.env.PORT || 4001
 
@@ -23,6 +24,7 @@ app.use((req, res, next) => {
   next()
 })
 
+// start a new game by initializing a board with 0
 app.post('/games', (req, res) => {
   const initialBoard = [
     [0, 0, 0, 0, 0, 0],
@@ -57,6 +59,47 @@ app.post('/games', (req, res) => {
       })
     })
 })
+
+// we want to update our game board based on user actions
+const patchOrPut = (req, res) => {
+  const { x, y } = req.body // x & y axis
+  Game
+    .findById(req.params.id)
+    .then(game => {
+      let { board_status, game_status } = game
+      if (game_status === "ENDED") {
+        throw "Game has ended..."
+      }
+      let board = JSON.parse(board_status)
+
+      switch (board[x][y]) {
+        case 0:
+          newVal = 1
+          break
+        case 1:
+          newVal = 2
+          break
+        default:
+          newVal = 0
+          break
+      }
+      board[x][y] = newVal
+      const newGame = {
+        board_status: JSON.stringify(board),
+        game_status: rules.gameFinished(board) ? "ENDED" : "ACTIVE"
+      }
+      return game.update(newGame)
+    })
+    .then(final => {
+      res.json([final, rules.boardHasErrors(JSON.parse(final.board_status))])
+    })
+    .catch(err => {
+      res.status(500).send({ message: `something went wrong`, err })
+    })
+}
+
+app.put('/games/:id', patchOrPut)
+app.patch('/games/:id', patchOrPut)
 
 app.listen(port, () => {
   console.log(`listening for incoming connections on http://localhost:${port}`)
